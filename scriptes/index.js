@@ -1,91 +1,160 @@
 const city = document.getElementById("city");
+const temperature = document.getElementById("temperature");
 const searchForm = document.getElementById("searchForm");
 const cityInput = document.getElementById("cityInput");
-const temperature = document.getElementById("temperature");
+const forecastContainer = document.getElementById("forecastContainer");
 
-async function getData2(latitude, longitude) {
+// Function to fetch weather data for a given latitude and longitude
+async function getWeatherData(latitude, longitude) {
   try {
-    const oauthToken =
-      "eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCJ9.eyJ2IjoxLCJ1c2VyIjoibm9jb21wYW55X25ldF9sZWFkZXIiLCJpc3MiOiJsb2dpbi5tZXRlb21hdGljcy5jb20iLCJleHAiOjE3Mzc1NjEyNDksInN1YiI6ImFjY2VzcyJ9.-G45SC4IUcwOIWs7P5nfBhIlGsdv9aP9CNxKmRV3j7Bb9a2h21jtQ8gdyhEefaKIujdmwOnyf8OXIOMq18le4Q";
-
-    const apiUrl = `https://api.meteomatics.com/2025-01-21T12:00:00Z/t_2m:C/wind_gusts_10m_1h:ms/${latitude},${longitude}/47.42,9.37_47.46,9.04:10+47.51,8.78:10+47.39,8.57:10/json`;
-    https: console.log("Fetching weather data from:", apiUrl);
-
-    const response = await fetch(apiUrl, {
-      headers: { Authorization: `Bearer ${oauthToken}` },
-    });
-
+    const apiUrl = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&daily=weathercode,temperature_2m_max,temperature_2m_min&hourly=temperature_2m&timezone=auto`;
+    console.log("Fetching weather data from:", apiUrl);
+    const response = await fetch(apiUrl);
     if (!response.ok) {
       throw new Error(
         `HTTP error! Status: ${response.status}, Status Text: ${response.statusText}`
       );
     }
-
-    const data2 = await response.json();
-    console.log("Weather Data:", data2);
-
-    if (
-      data2 &&
-      data2.data &&
-      data2.data.length > 0 &&
-      data2.data[0].coordinates
-    ) {
-      const temperatureValue = data2.data[0].coordinates[0].dates[1].value;
-      temperature.innerHTML = `${temperatureValue}°C`;
-      console.log(`Temperature: ${temperatureValue}°C`);
+    const data = await response.json();
+    console.log("Weather Data:", data);
+    if (data && data.daily && data.hourly) {
+      return data; 
     } else {
-      temperature.innerHTML = "Temperature data not available";
+      throw new Error("No forecast data available");
     }
   } catch (error) {
     console.error("Error fetching weather data:", error.message);
-    temperature.innerHTML = "Failed to fetch temperature data";
+    throw error;
   }
 }
 
-async function getData(cityname) {
+// Function to fetch city data
+async function getCityData(cityName) {
   try {
-    let header = new Headers();
+    const header = new Headers();
     header.set("X-Api-Key", "lUIGfjAuln7SuSF2fzKpig==hqIA07DXQPrAW8ev");
     const response = await fetch(
-      `https://api.api-ninjas.com/v1/city?name=${cityname}`,
-      {
-        headers: header,
-      }
+      `https://api.api-ninjas.com/v1/city?name=${cityName}`,
+      { headers: header }
     );
-
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
-
     const data = await response.json();
     console.log("City Data:", data);
-
     if (data.length > 0) {
-      city.innerHTML = data[0].name;
-      console.log(`City: ${data[0].name}`);
-      getData2(data[0].latitude, data[0].longitude); 
+      return data[0]; 
     } else {
-      city.innerHTML = "City not found";
+      throw new Error("City not found");
     }
   } catch (error) {
     console.error("Error fetching city data:", error.message);
-    city.innerHTML = "Failed to fetch city data";
+    throw error;
   }
 }
 
-function Citysearch() {
-  let s = cityInput.value.trim();
-  if (s) {
-    getData(s);
+// Function to generate HTML for a single day's forecast
+function generateForecastHTML(day, icon, condition, high, low) {
+  return `
+    <div class="card">
+      <div class="meteodays d-flex flex-column align-items-center">
+        <h4>${day}</h4>
+        <div class="d-flex justify-content-center mb-2">
+          <img src="/animation/animated/${icon}" alt="Weather Icon" class="img-fluid" style="width: 50px; height: 50px;">
+        </div>
+        <h5>${condition}</h5>
+        <p>${high}°C / ${low}°C</p>
+      </div>
+    </div>
+  `;
+}
+
+// Function to map weather codes to conditions and icons
+function getWeatherCondition(weatherCode) {
+  const weatherConditions = {
+    0: { condition: "Clear", icon: "sunny.svg" },
+    1: { condition: "Mainly Clear", icon: "cloudy-day-1.svg" },
+    2: { condition: "Partly Cloudy", icon: "cloudy-day-2.svg" },
+    3: { condition: "Overcast", icon: "cloudy.svg" },
+    45: { condition: "Fog", icon: "fog.svg" },
+    51: { condition: "Light Drizzle", icon: "rainy-1.svg" },
+    53: { condition: "Moderate Drizzle", icon: "rainy-2.svg" },
+    55: { condition: "Heavy Drizzle", icon: "rainy-3.svg" },
+    61: { condition: "Light Rain", icon: "rainy-4.svg" },
+    63: { condition: "Moderate Rain", icon: "rainy-5.svg" },
+    65: { condition: "Heavy Rain", icon: "rainy-6.svg" },
+    80: { condition: "Light Showers", icon: "rainy-7.svg" },
+    81: { condition: "Moderate Showers", icon: "rainy-6.svg" },
+    82: { condition: "Heavy Showers", icon: "rainy-7.svg" },
+    95: { condition: "Thunderstorm", icon: "thunder.svg" },
+    96: { condition: "Thunderstorm with Hail", icon: "thunder.svg" },
+  };
+  return (
+    weatherConditions[weatherCode] || {
+      condition: "Unknown",
+      icon: "cloudy.svg",
+    }
+  );
+}
+
+// Function to render the 7-Day Forecast
+async function renderForecast(cityName) {
+  try {
+    const cityData = await getCityData(cityName);
+    city.innerHTML = cityData.name;
+
+    const weatherData = await getWeatherData(
+      cityData.latitude,
+      cityData.longitude
+    );
+    forecastContainer.innerHTML = "";
+
+    // Display current temperature
+    const currentTemperature = weatherData.hourly.temperature_2m[0]; 
+    temperature.innerHTML = `${currentTemperature}°C`; 
+
+    const days = [
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday",
+      "Sunday",
+    ];
+    weatherData.daily.time.forEach((date, index) => {
+      const weatherCode = weatherData.daily.weathercode[index];
+      const highTemp = weatherData.daily.temperature_2m_max[index];
+      const lowTemp = weatherData.daily.temperature_2m_min[index];
+      const { condition, icon } = getWeatherCondition(weatherCode);
+
+      const dayName = index === 0 ? "Today" : days[(index - 1) % days.length];
+
+      const forecastHTML = generateForecastHTML(
+        dayName,
+        icon,
+        condition,
+        highTemp,
+        lowTemp
+      );
+      forecastContainer.insertAdjacentHTML("beforeend", forecastHTML);
+    });
+  } catch (error) {
+    console.error("Error rendering forecast:", error.message);
+    forecastContainer.innerHTML = "Failed to fetch forecast data.";
+  }
+}
+
+// Function to handle city search
+function handleCitySearch(event) {
+  event.preventDefault();
+  const cityName = cityInput.value.trim();
+  if (cityName) {
+    renderForecast(cityName);
   } else {
     city.innerHTML = "Please enter a city name.";
-    temperature.innerHTML = ""; 
+    forecastContainer.innerHTML = "";
   }
 }
 
-
-search.addEventListener("submit", function (event) {
-  event.preventDefault();
-  Citysearch();
-});
-
+search.addEventListener("submit", handleCitySearch);

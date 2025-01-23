@@ -2,27 +2,40 @@ const city = document.getElementById("city");
 const searchForm = document.getElementById("searchForm");
 const cityInput = document.getElementById("cityInput");
 const temperature = document.getElementById("temperature");
+const WeatherIcon = document.getElementById("WeatherIcon");
 
-// Fetch weather data based on latitude and longitude
 async function getData2(latitude, longitude) {
   try {
-    const oauthToken =
-      "eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCJ9.eyJ2IjoxLCJ1c2VyIjoibm9jb21wYW55X25ldF9sZWFkZXIiLCJpc3MiOiJsb2dpbi5tZXRlb21hdGljcy5jb20iLCJleHAiOjE3Mzc1NjEyNDksInN1YiI6ImFjY2VzcyJ9.-G45SC4IUcwOIWs7P5nfBhIlGsdv9aP9CNxKmRV3j7Bb9a2h21jtQ8gdyhEefaKIujdmwOnyf8OXIOMq18le4Q";
-    const response = await fetch(
-      `https://api.meteomatics.com/2025-01-21T12:00:00Z/t_2m:C/${latitude},${longitude}/json`,
-      {
-        headers: { Authorization: `Bearer ${oauthToken}` },
-      }
-    );
+    const apiUrl = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&hourly=temperature_2m`;
+    console.log("Fetching weather data from:", apiUrl);
+
+    const response = await fetch(apiUrl);
+
     if (!response.ok) {
       throw new Error(
         `HTTP error! Status: ${response.status}, Status Text: ${response.statusText}`
       );
     }
+
     const data2 = await response.json();
-    console.log(data2);
+    console.log("Weather Data:", data2);
+
+    if (data2 && data2.hourly && data2.hourly.temperature_2m.length > 0) {
+      const temperatureValue = data2.hourly.temperature_2m[0];
+      temperature.innerHTML = `${temperatureValue}°C`;
+
+      if (temperatureValue > 20) {
+        WeatherIcon.src =
+          "https://cdn-icons-png.flaticon.com/512/1163/1163661.png";
+      }
+
+      console.log(`Temperature: ${temperatureValue}°C`);
+    } else {
+      temperature.innerHTML = "Temperature data not available";
+    }
   } catch (error) {
-    console.error("Error fetching data:", error.message);
+    console.error("Error fetching weather data:", error.message);
+    temperature.innerHTML = "Failed to fetch temperature data";
   }
 }
 
@@ -42,30 +55,30 @@ async function getData(cityname) {
     }
 
     const data = await response.json();
-    console.log("city", data);
+    console.log("City Data:", data);
 
     if (data.length > 0) {
       city.innerHTML = data[0].name;
-      console.log(data[0].name);
+      console.log(`City: ${data[0].name}`);
       getData2(data[0].latitude, data[0].longitude);
     } else {
       city.innerHTML = "City not found";
     }
   } catch (error) {
-    console.log("Error fetching city data:", error.message);
+    console.error("Error fetching city data:", error.message);
+    city.innerHTML = "Failed to fetch city data";
   }
 }
 
-// Search function to get the city name from input
 function Citysearch() {
   let s = cityInput.value.trim();
   if (s) {
     getData(s);
   } else {
     city.innerHTML = "Please enter a city name.";
+    temperature.innerHTML = "";
   }
 }
-
 search.addEventListener("submit", function (event) {
   event.preventDefault();
   Citysearch();

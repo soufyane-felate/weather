@@ -1,58 +1,70 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
     <title>Weather Connect</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-polyfill/7.12.1/polyfill.min.js"></script>
-</head>
-<body>
+  </head>
+  <body style="background-color: aqua;">
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark">
-        <form class="form-inline mx-auto" id="search">
-            <input type="text" placeholder="Search for cities" class="form-control" id="cityInput">
-        </form>
+      <form class="form-inline mx-auto" id="search">
+        <input
+          type="text"
+          placeholder="Search for cities"
+          class="form-control"
+          id="cityInput"
+        />
+        
+      </form>
     </nav>
     <!-- Weather Information -->
     <div class="container">
-        <div class="row">
-            <!-- Current Weather Section -->
-            <div class="col-md-8 part1">
-                <div class="row">
-                    <div class="col-md-6 text-center">
-                        <h1 id="city">Madrid</h1>
-                        <h2 id="temperature">31°C</h2>
-                    </div>
-                    <div class="col-md-6 text-center">
-                        <img src="/animation/animated/cloudy-day-1.svg" alt="Weather Icon" class="img-fluid">
-                    </div>
-                </div>
-                <div class="card mt-4">
-                    <h3 class="card-title text-center">Today's Forecast</h3>
-                    <div class="d-flex justify-content-around">
-                        <div class="text-center">
-                            <h5 id="time">6:00 AM</h5>
-                            <img src="/animation/animated/cloudy-day-1.svg" alt="Icon" class="img-fluid rounded">
-                            <h6>25°C</h6>
-                        </div>
-                    </div>
-                </div>
+      <div class="row">
+        <!-- Current Weather Section -->
+        <div class="col-md-8 part1">
+          <div class="row">
+            <div class="col-md-6 text-center">
+              <h1 id="city"></h1>
+              <h2 id="temperature"></h2>
             </div>
-            <!-- Weekly Forecast Section -->
-            <div class="col-md-4">
-                <div class="card">
-                    <h3 class="card-title text-center">7-Day Forecast</h3>
-                    <div class="meteodays">
-                        <h4>Today</h4>
-                        <img src="/animation/animated/cloudy-day-1.svg" alt="Weather Icon" class="img-fluid">
-                        <h5>Sunny</h5>
-                        <p>36°C / 22°C</p>
-                    </div>
-                </div>
+            <div class="col-md-6 text-center">
+              <img
+                src="/animation/animated/cloudy-day-1.svg"
+                alt="Weather Icon"
+                class="img-fluid"
+                id="WeatherIcon"
+              />
             </div>
+          </div>
+          <div class="card mt-4">
+            <h3 class="card-title text-center">Today's Forecast</h3>
+            <div class="d-flex justify-content-around">
+              <div class="text-center">
+                <h5 id="time">6:00 AM</h5>
+                <img
+                  src="/animation/animated/cloudy-day-1.svg"
+                  alt="Icon"
+                  class="img-fluid rounded"
+                />
+                <h6>25°C</h6>
+              </div>
+            </div>
+          </div>
         </div>
+        <div class="col-md-4">
+          <div class="card">
+            <h3 class="card-title text-center">7-Day Forecast</h3>
+            <div id="forecastContainer" class="meteodays"></div>
+          </div>
+        </div>
+      </div>
     </div>
     <script src="/scriptes/index.js"></script>
-</body>
+  </body>
 </html>
