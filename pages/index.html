@@ -7,12 +7,17 @@
       rel="stylesheet"
       href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
     />
+    <link rel="stylesheet" href="/styles/index.css">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
     <title>Weather Connect</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-polyfill/7.12.1/polyfill.min.js"></script>
   </head>
-  <body style="background-color: aqua;">
+  <body>
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark">
+    <nav class="navbar navbar-expand-lg navbar-light">
       <form class="form-inline mx-auto" id="search">
         <input
           type="text"
@@ -20,51 +25,106 @@
           class="form-control"
           id="cityInput"
         />
-        
       </form>
     </nav>
+
     <!-- Weather Information -->
     <div class="container">
-      <div class="row">
-        <!-- Current Weather Section -->
-        <div class="col-md-8 part1">
-          <div class="row">
-            <div class="col-md-6 text-center">
-              <h1 id="city"></h1>
-              <h2 id="temperature"></h2>
-            </div>
-            <div class="col-md-6 text-center">
+    
+
+      <div class="row mt-4">
+        <div class="col-md-12">
+          <div class="card today-forecast">
+            <div class="text-center">
+              <h1 id="city">City Name</h1>
+              <h2 id="temperature">25°C</h2>
               <img
                 src="/animation/animated/cloudy-day-1.svg"
                 alt="Weather Icon"
-                class="img-fluid"
+                class="weather-icon"
                 id="WeatherIcon"
               />
             </div>
           </div>
-          <div class="card mt-4">
-            <h3 class="card-title text-center">Today's Forecast</h3>
-            <div class="d-flex justify-content-around">
-              <div class="text-center">
-                <h5 id="time">6:00 AM</h5>
-                <img
-                  src="/animation/animated/cloudy-day-1.svg"
-                  alt="Icon"
-                  class="img-fluid rounded"
-                />
-                <h6>25°C</h6>
-              </div>
-            </div>
-          </div>
         </div>
+      </div>
+<!-- Today's Forecast -->
+<div class="row mt-4">
+  <div class="col-md-12">
+    <div class="card today-forecast">
+      <h3 class="card-title text-center">Today's Forecast</h3>
+      <div class="row text-center">
         <div class="col-md-4">
-          <div class="card">
-            <h3 class="card-title text-center">7-Day Forecast</h3>
-            <div id="forecastContainer" class="meteodays"></div>
+          <h4 id="todayCondition">Clear</h4>
+          <img id="todayIcon" src="/animation/animated/sunny.svg" alt="Weather Icon" class="img-fluid" style="width: 80px;">
+          <h2 id="todayTemperature">25°C</h2>
+        </div>
+        <div class="col-md-8">
+          <div class="row">
+            <div class="col-md-6">
+              <p><strong>Real Feel:</strong> <span id="todayRealFeel">25°C</span></p>
+              <p><strong>Chance of Rain:</strong> <span id="todayChanceRain">10%</span></p>
+            </div>
+            <div class="col-md-6">
+              <p><strong>Wind Speed:</strong> <span id="todayWind">5 km/h</span></p>
+              <p><strong>UV Index:</strong> <span id="todayUVIndex">3</span></p>
+            </div>
           </div>
         </div>
       </div>
     </div>
+  </div>
+</div>
+
+      <!-- Third Row: Air Conditions -->
+      <div class="row mt-4">
+        <div class="col-md-12">
+          <div class="card air-conditions">
+            <h3 class="card-title text-center">Air Conditions</h3>
+            <div class="row">
+              <div class="col-6 col-md-3 condition">
+                <img src="/animation/animated/cloudy-day-1.svg" alt="" />
+                <h4>Real Feel</h4>
+                <p class="realFeelValue">25°</p>
+              </div>
+              <div class="col-6 col-md-3 condition">
+                <img src="/animation/animated/cloudy-day-1.svg" alt="" />
+                <h4>Chance of Rain</h4>
+                <p class="chanceRainValue">25%</p>
+              </div>
+              <div class="col-6 col-md-3 condition">
+                <img src="/animation/animated/cloudy-day-1.svg" alt="" />
+                <h4>Wind</h4>
+                <p class="windValue">0.2 km/h</p>
+              </div>
+              <div class="col-6 col-md-3 condition">
+                <img src="/animation/animated/cloudy-day-1.svg" alt="" />
+                <h4>UV Index</h4>
+                <p class="uvIndexValue">3</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+  <!--  7-Day Forecast -->
+      <div class="row mt-4">
+        <div class="col-md-12">
+          <div class="card forecast-container">
+            <h3 class="card-title text-center">7-Day Forecast</h3>
+            <div class="row" id="forecastContainer">
+              
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Footer -->
+      <div class="row mt-4">
+        <div class="col-md-12 text-center">
+          <p class="text-muted">© 2023 Weather Connect. All rights reserved.</p>
+        </div>
+      </div>
+    </div>
+
     <script src="/scriptes/index.js"></script>
   </body>
 </html>
