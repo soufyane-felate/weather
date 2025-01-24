@@ -27,7 +27,7 @@ async function fetchWeather(cityName) {
     city.innerText = name;
 
     // Fetch weather data
-    const weatherResponse = await fetch(
+    const weatherResponse = await fetch( 
       `${weatherBaseUrl}?latitude=${latitude}&longitude=${longitude}&daily=weathercode,temperature_2m_max,temperature_2m_min,precipitation_probability_max&current=temperature_2m,apparent_temperature,windspeed_10m,uv_index&timezone=auto`
     );
     if (!weatherResponse.ok) throw new Error("Weather data unavailable!");
